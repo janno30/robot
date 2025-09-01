@@ -1,0 +1,15 @@
+# Discord Bot Configuration
+# Copy this file to .env and fill in your values
+
+# Your bot token from Discord Developer Portal
+BOT_TOKEN=your_bot_token_here
+
+# Your Discord server (guild) ID (optional - leave empty for global commands)
+GUILD_ID=your_guild_id_here
+
+# Channel ID for moderation logs (optional)
+LOG_CHANNEL_ID=your_log_channel_id_here
+
+# Role IDs for permissions (optional - leave empty to use Discord's built-in permissions)
+ADMIN_ROLE_ID=your_admin_role_id_here
+MODERATOR_ROLE_ID=your_moderator_role_id_here
