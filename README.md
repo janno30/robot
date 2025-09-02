@@ -67,7 +67,7 @@ pip install -r requirements.txt
    - Read Message History
 
 ### Step 4: Configuration
-1. Copy `env_example.txt` to `.env`
+1. Copy `env_template.txt` to `.env`
 2. Fill in your configuration:
    ```env
    BOT_TOKEN=your_actual_bot_token

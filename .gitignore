@@ -1,0 +1,58 @@
+# Environment files
+.env
+.env.*
+*.env
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Build/distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing/coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checker caches
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Tool caches
+.ruff_cache/
+.cache/
+
+# Databases and local data
+*.db
+*.sqlite
+*.sqlite3
+moderation_data.json
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Node (if any frontend/tools get added)
+node_modules/
+
+# Do not ignore the template file
+!env_template.txt
