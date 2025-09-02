@@ -37,6 +37,13 @@ A powerful Discord bot built with Python and discord.py that provides comprehens
 - Detailed audit trails for all actions
 - Beautiful embed-based notifications
 
+### 🌐 Real-Time Web Interface
+- **Live Dashboard** - View moderation statistics in real-time
+- **WebSocket Support** - Automatic updates without browser refresh
+- **Statistics Display** - Total warnings, mutes, bans, and kicks
+- **Connection Status** - Visual indicator of real-time connection
+- **Auto-reconnect** - Automatic reconnection if connection is lost
+
 ## 🛠️ Installation
 
 ### Prerequisites
@@ -93,12 +100,42 @@ This project now includes a lightweight FastAPI web server that starts alongside
 
 - **Health:** `GET /health` → `{ status: "ok", uptime_seconds: number }`
 - **Metrics:** `GET /metrics` → Prometheus-format counters
+- **Statistics:** `GET /api/stats` → Current moderation statistics
+- **WebSocket:** `ws://localhost:8000/ws` → Real-time updates
 
 Configure host/port via environment variables (defaults shown):
 ```env
 WEB_HOST=0.0.0.0
 WEB_PORT=8000
 ```
+
+## 🌐 Real-Time Web Interface
+
+### Accessing the Dashboard
+1. Start the bot with `python main.py`
+2. Open your browser and navigate to `http://localhost:8000`
+3. The dashboard will automatically connect via WebSocket for real-time updates
+
+### Features
+- **Real-time Statistics**: See moderation counts update instantly
+- **Connection Status**: Green dot indicates active WebSocket connection
+- **Auto-reconnect**: Automatically reconnects if connection is lost
+- **Live Updates**: No need to refresh the browser - updates happen automatically
+
+### Testing Real-Time Functionality
+Run the test script to see real-time updates in action:
+```bash
+python test_realtime.py
+```
+
+This script will simulate moderation actions and you'll see the web interface update in real-time for each action.
+
+### API Endpoints
+- **`GET /`** - Main dashboard with real-time statistics
+- **`GET /api/stats`** - JSON API for current statistics
+- **`GET /health`** - Health check endpoint
+- **`GET /metrics`** - Prometheus metrics
+- **`WS /ws`** - WebSocket endpoint for real-time updates
 
 ## 📋 Available Commands
 
