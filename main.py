@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands
 import asyncio
+import contextlib
 import os
+import asyncio
 from config import BOT_TOKEN, GUILD_ID
 
 # Bot setup
@@ -143,6 +145,62 @@ async def help_command(interaction: discord.Interaction):
     except Exception as e:
         await interaction.response.send_message(f"❌ Error: {str(e)}", ephemeral=True)
 
+
+class RespectView(discord.ui.View):
+    """Interactive view allowing users to press F to pay respect"""
+    def __init__(self, initiator: discord.User, subject_text: str, timeout: int = 120):
+        super().__init__(timeout=timeout)
+        self.initiator = initiator
+        self.subject_text = subject_text
+        self._user_ids_who_paid: set[int] = set()
+
+    def _build_embed(self) -> discord.Embed:
+        paid_count = len(self._user_ids_who_paid)
+        embed = discord.Embed(
+            title="🕯️ Pay Respects",
+            description=f"Press the button below to pay your respects to **{self.subject_text}**.",
+            color=0x2b2d31
+        )
+        embed.add_field(name="Respects Paid", value=str(paid_count), inline=True)
+        if paid_count > 0:
+            names_preview = ", ".join(f"<@{uid}>" for uid in list(self._user_ids_who_paid)[:5])
+            embed.add_field(name="Recently", value=names_preview, inline=False)
+        embed.set_footer(text="Press F to pay respect")
+        return embed
+
+    @discord.ui.button(label="Press F to pay respect", style=discord.ButtonStyle.primary, emoji="🇫")
+    async def press_f(self, interaction: discord.Interaction, button: discord.ui.Button):  # type: ignore[override]
+        if interaction.user.id in self._user_ids_who_paid:
+            await interaction.response.send_message("You already paid your respect.", ephemeral=True)
+            return
+        self._user_ids_who_paid.add(interaction.user.id)
+        try:
+            await interaction.response.edit_message(embed=self._build_embed(), view=self)
+        except Exception as e:
+            try:
+                await interaction.followup.send(f"❌ Couldn't update: {str(e)}", ephemeral=True)
+            except:
+                pass
+
+    async def on_timeout(self) -> None:
+        for item in self.children:
+            if isinstance(item, discord.ui.Button):
+                item.disabled = True
+
+
+@bot.tree.command(name="respect", description="Start a 'press F to pay respect' moment")
+@discord.app_commands.describe(subject="What are we paying respect to?")
+async def respect(interaction: discord.Interaction, subject: str | None = None):
+    try:
+        subject_text = subject.strip() if subject else "this moment"
+        view = RespectView(interaction.user, subject_text)
+        await interaction.response.send_message(embed=view._build_embed(), view=view)
+    except Exception as e:
+        if not interaction.response.is_done():
+            await interaction.response.send_message(f"❌ Error: {str(e)}", ephemeral=True)
+        else:
+            await interaction.followup.send(f"❌ Error: {str(e)}", ephemeral=True)
+
 @bot.tree.command(name="sync", description="Sync slash commands (Admin only)")
 async def sync_commands(interaction: discord.Interaction):
     """Sync slash commands manually"""
@@ -179,7 +237,21 @@ async def main():
     """Main function to start the bot"""
     async with bot:
         await load_extensions()
+        # Start the FastAPI server in the background
+        try:
+            from web import serve as start_web
+            web_task = asyncio.create_task(start_web())
+            print("🌐 Web server starting...")
+        except Exception as e:
+            print(f"⚠️ Failed to start web server: {e}")
+            web_task = None
+        # Start the Discord bot (blocking until shutdown)
         await bot.start(BOT_TOKEN)
+        # When bot stops, cancel web server if it's running
+        if web_task:
+            web_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await web_task
 
 if __name__ == "__main__":
     if not BOT_TOKEN:

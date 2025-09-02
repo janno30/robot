@@ -23,3 +23,7 @@ EMBED_COLORS = {
     'error': 0xff0000,    # Red
     'info': 0x0099ff      # Blue
 }
+
+# Web server (FastAPI) settings
+WEB_HOST = os.getenv('WEB_HOST', '0.0.0.0')
+WEB_PORT = int(os.getenv('WEB_PORT', '8000'))

@@ -88,6 +88,18 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### Optional: Built-in Web Server
+This project now includes a lightweight FastAPI web server that starts alongside the bot.
+
+- **Health:** `GET /health` → `{ status: "ok", uptime_seconds: number }`
+- **Metrics:** `GET /metrics` → Prometheus-format counters
+
+Configure host/port via environment variables (defaults shown):
+```env
+WEB_HOST=0.0.0.0
+WEB_PORT=8000
+```
+
 ## 📋 Available Commands
 
 | Command | Description | Usage |
@@ -104,6 +116,7 @@ python main.py
 | `/modinfo` | User moderation info | `/modinfo @user` |
 | `/ping` | Check bot latency | `/ping` |
 | `/help` | Show help menu | `/help` |
+| `/respect` | Press F to pay respect | `/respect subject:your_text` |
 
 ## ⚙️ Configuration Options
 
